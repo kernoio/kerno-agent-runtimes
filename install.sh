@@ -5,8 +5,6 @@ for tool in "${required_tools[@]}"; do
   command -v "$tool" > /dev/null 2>&1 || { echo "Error: '$tool' is required but not installed"; exit 1; }
 done
 
-# Whilst this repo is still private, ensure you set TOKEN to access GH API
-
 # BEGIN - AUTO GENERATED DO NOT EDIT
 RUNTIME_RELEASE=2025.11.09.1813
 AGENT_RELEASE=2025.11.10.0903
@@ -20,17 +18,12 @@ RUNTIME_ASSET_ID_WINDOWS_AMD64=314406459
 
 # Override with latest dev pre-release assets if DEV=true
 if [ "${DEV:-false}" == "true" ]; then
-  if [ -z "$TOKEN" ]; then
-    echo "Error: TOKEN environment variable is required for dev builds"
-    exit 1
-  fi
-
   # Fetch latest-dev pre-release to get release ID
-  RELEASE_INFO=$(curl -s -H "Authorization: token $TOKEN" \
+  RELEASE_INFO=$(curl -s \
     "https://api.github.com/repos/kernoio/kerno-agent-runtimes/releases/tags/latest-dev")
 
   if echo "$RELEASE_INFO" | grep -q '"message"'; then
-    echo "Error: Could not fetch latest-dev release. Check TOKEN and ensure latest-dev pre-release exists"
+    echo "Error: Could not fetch latest-dev release. Check ensure latest-dev pre-release exists"
     exit 1
   fi
 
@@ -39,11 +32,11 @@ if [ "${DEV:-false}" == "true" ]; then
   AGENT_RELEASE=$(echo "$RELEASE_INFO" | grep -o '"tag_name": "[^"]*"' | head -1 | sed 's/"tag_name": "\([^"]*\)"/\1/')
 
   # Fetch assets for this release using the release ID
-  ASSETS_DATA=$(curl -s -H "Authorization: token $TOKEN" \
+  ASSETS_DATA=$(curl -s \
     "https://api.github.com/repos/kernoio/kerno-agent-runtimes/releases/$RELEASE_ID/assets")
 
   if echo "$ASSETS_DATA" | grep -q '"message"'; then
-    echo "Error: Could not fetch assets. Check TOKEN"
+    echo "Error: Could not fetch assets."
     exit 1
   fi
 
@@ -134,7 +127,6 @@ else
     mkdir -p "$HOME/.kerno/assets/runtime/$RUNTIME_RELEASE"
     curl -L \
         -H "Accept: application/octet-stream" \
-        -H "Authorization: Bearer $TOKEN" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -o "$HOME/.kerno/assets/runtime/$RUNTIME_RELEASE/runtime.tar.gz" \
         "https://api.github.com/repos/kernoio/kerno-agent-runtimes/releases/assets/$RUNTIME_ASSET_ID"
@@ -165,7 +157,6 @@ else
     mkdir -p "$HOME/.kerno/assets/agent/$AGENT_RELEASE"
     curl -L \
         -H "Accept: application/octet-stream" \
-        -H "Authorization: Bearer $TOKEN" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -o "$HOME/.kerno/assets/agent/$AGENT_RELEASE/agent.tar.gz" \
         "https://api.github.com/repos/kernoio/kerno-agent-runtimes/releases/assets/$AGENT_ASSET_ID"
