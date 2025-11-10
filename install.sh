@@ -184,8 +184,10 @@ else
             export JAVA_HOME=$HOME/.kerno/assets/runtime/RUNTIME_VERSION_PLACEHOLDER/custom-jre
             "$HOME"/.kerno/assets/agent/AGENT_VERSION_PLACEHOLDER/aicore-agent/bin/aicore-agent
 EOF
-            sed -i "s|RUNTIME_VERSION_PLACEHOLDER|$RUNTIME_RELEASE|g" "$STARTUP_SCRIPT"
-            sed -i "s|AGENT_VERSION_PLACEHOLDER|$AGENT_RELEASE|g" "$STARTUP_SCRIPT"
+
+            sed -i.bak "s|AGENT_VERSION_PLACEHOLDER|$AGENT_RELEASE|g" "$STARTUP_SCRIPT"
+            sed -i.bak "s|RUNTIME_VERSION_PLACEHOLDER|$RUNTIME_RELEASE|g" "$STARTUP_SCRIPT"
+            rm "${STARTUP_SCRIPT}.bak"
             chmod +x "$STARTUP_SCRIPT"
             echo "Agent installation completed successfully."
         else
