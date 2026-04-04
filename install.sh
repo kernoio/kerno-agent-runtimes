@@ -173,7 +173,7 @@ else
             #!/bin/bash
 
             export JAVA_HOME=$HOME/.kerno/assets/runtime/RUNTIME_VERSION_PLACEHOLDER/custom-jre
-            "$HOME"/.kerno/assets/agent/AGENT_VERSION_PLACEHOLDER/aicore-agent/bin/aicore-agent
+            exec "$HOME"/.kerno/assets/agent/AGENT_VERSION_PLACEHOLDER/aicore-agent/bin/aicore-agent
 EOF
             sed -i.bak "s|AGENT_VERSION_PLACEHOLDER|$AGENT_RELEASE|g" "$STARTUP_SCRIPT"
             sed -i.bak "s|RUNTIME_VERSION_PLACEHOLDER|$RUNTIME_RELEASE|g" "$STARTUP_SCRIPT"
